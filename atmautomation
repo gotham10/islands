@@ -1,3 +1,7 @@
+local amt = getgenv().amt
+local tType = getgenv().tType
+local aType = getgenv().aType
+
 local s = game:GetService("HttpService")
 local function g()
 	return s:GenerateGUID(false)..s:GenerateGUID(false)..s:GenerateGUID(false)
