@@ -1,6 +1,6 @@
-amt = CoinAmount
-tType = TransactionType
-aType = AccountType
+local amt = getgenv().CoinAmount
+local tType = getgenv().TransactionType
+local aType = getgenv().AccountType
 
 local s = game:GetService("HttpService")
 local function g()
