@@ -1,0 +1,65 @@
+local s = game:GetService("HttpService")
+local function g()
+	return s:GenerateGUID(false)..s:GenerateGUID(false)..s:GenerateGUID(false)
+end
+
+local r = game:GetService("ReplicatedStorage")
+local p = game:GetService("Players").LocalPlayer
+local config = loadstring(game:HttpGet(""))()
+
+local amt = config.amt
+local tType = config.tType
+local aType = config.aType
+
+local n = r:WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged")
+local remote = n:WaitForChild("TransactionBankBalance")
+
+local function normalizeAccountType(x)
+	x = string.lower(x)
+	if x == "p" or x == "personal" then return "PERSONAL"
+	elseif x == "s" or x == "shared" then return "SHARED"
+	elseif x == "b" or x == "both" then return "BOTH"
+	end
+end
+
+local function normalizeTransferType(x)
+	x = string.lower(x)
+	if x == "w" or x == "withdrawal" then return "WITHDRAWAL"
+	elseif x == "d" or x == "deposit" then return "DEPOSIT"
+	end
+end
+
+local function run()
+	local h = g()
+	local list = {}
+	local normAcc = normalizeAccountType(aType)
+	local normType = normalizeTransferType(tType)
+
+	if not normAcc or not normType then return end
+	if normAcc == "PERSONAL" then
+		table.insert(list, "PERSONAL")
+	elseif normAcc == "SHARED" then
+		table.insert(list, "SHARED")
+	elseif normAcc == "BOTH" then
+		table.insert(list, "PERSONAL")
+		table.insert(list, "SHARED")
+	end
+
+	if type(amt) ~= "number" or amt <= 0 then return end
+
+	for _, a in ipairs(list) do
+		local args = {
+			[1] = h,
+			[2] = {
+				[1] = {
+					["accountType"] = a,
+					["transferType"] = normType,
+					["amount"] = amt
+				}
+			}
+		}
+		remote:FireServer(unpack(args))
+	end
+end
+
+run()
