@@ -1,0 +1,56 @@
+local outputMode = getgenv().outputMode or "print"
+local pCoins, sCoins, wCoins = nil, nil, nil
+local pTier, sTier = nil, nil
+local tierInfo = {[0] = {storage = "1.00B", cost = "FREE"},[1] = {storage = "1.25B", cost = "100,000"},[2] = {storage = "1.50B", cost = "200,000"},[3] = {storage = "2.00B", cost = "400,000"},[4] = {storage = "5.00B", cost = "800,000"},[5] = {storage = "7.50B", cost = "16,000,000"},[6] = {storage = "10.00B", cost = "32,000,000"},[7] = {storage = "25.00B", cost = "64,000,000"},[8] = {storage = "50.00B", cost = "128,000,000"},[9] = {storage = "75.00B", cost = "256,000,000"},[10] = {storage = "100.00B", cost = "512,000,000"}}
+
+for _, t in ipairs(getgc(true)) do
+	if typeof(t) == "table" then
+		if rawget(t, "coins") and rawget(t, "tier") and type(t.tier) == "number" and t.coins > 0 then
+			if not pCoins then
+				pCoins = t.coins
+				pTier = t.tier
+			elseif not sCoins and t.coins ~= pCoins then
+				sCoins = t.coins
+				sTier = t.tier
+			end
+		end
+
+		if rawget(t, "coinBalance") and type(t.coinBalance) == "number" then
+			wCoins = t.coinBalance
+		end
+	end
+end
+
+local o = ""
+local total = 0
+
+if pCoins then
+	local tierText = tierInfo[pTier] and (" (Tier %d - %s Storage)"):format(pTier, tierInfo[pTier].storage) or (" (Tier %d)"):format(pTier)
+	o = o .. "Personal: " .. pCoins .. tierText .. "\n"
+	total = total + pCoins
+end
+
+if sCoins then
+	local tierText = tierInfo[sTier] and (" (Tier %d - %s Storage)"):format(sTier, tierInfo[sTier].storage) or (" (Tier %d)"):format(sTier)
+	o = o .. "Shared: " .. sCoins .. tierText .. "\n"
+	total = total + sCoins
+end
+
+if wCoins then
+	o = o .. "Wallet: " .. wCoins .. "\n"
+	total = total + wCoins
+end
+
+if total > 0 then
+	o = o .. "Total: " .. total
+else
+	o = "No account or wallet coin data found."
+end
+
+if outputMode == "print" or outputMode == "both" then
+	print(o)
+end
+
+if outputMode == "clipboard" or outputMode == "both" then
+	setclipboard(o)
+end
