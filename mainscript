@@ -1,4 +1,0 @@
-CoinAmount = 132
-TransactionType = "w" -- w = Withdraw, d = Deposit
-AccountType = "p" -- p = Personal, s = Shared, b = Both
-loadstring(game:HttpGet("https://raw.githubusercontent.com/gotham10/islands/main/AtmAutomation"))()
