@@ -5,11 +5,6 @@ end
 
 local r = game:GetService("ReplicatedStorage")
 local p = game:GetService("Players").LocalPlayer
-local config = loadstring(game:HttpGet(""))()
-
-local amt = config.amt
-local tType = config.tType
-local aType = config.aType
 
 local n = r:WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged")
 local remote = n:WaitForChild("TransactionBankBalance")
@@ -30,6 +25,8 @@ local function normalizeTransferType(x)
 end
 
 local function run()
+	if amt == nil or tType == nil or aType == nil then return end
+
 	local h = g()
 	local list = {}
 	local normAcc = normalizeAccountType(aType)
