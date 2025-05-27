@@ -1,0 +1,45 @@
+local playerUserId = game.Players.LocalPlayer.UserId
+local toolsFolder = game.ReplicatedStorage:FindFirstChild("Tools")
+local f = ""
+
+local function getDisplayName(toolName)
+    if not toolsFolder then return toolName end
+    local tool = toolsFolder:FindFirstChild(toolName)
+    if tool then
+        local displayNameVal = tool:FindFirstChild("DisplayName")
+        if displayNameVal and displayNameVal:IsA("StringValue") then
+            return displayNameVal.Value
+        end
+    end
+    return toolName
+end
+
+for _, island in pairs(workspace.Islands:GetChildren()) do
+    if island:IsA("Model") and island.Name:match("%-island$") then
+        local ownersFolder = island:FindFirstChild("Owners")
+        if ownersFolder then
+            for _, val in pairs(ownersFolder:GetChildren()) do
+                if val:IsA("NumberValue") and val.Value == playerUserId then
+                    local blocks = island:FindFirstChild("Blocks")
+                    if blocks and blocks:IsA("Folder") then
+                        local t = {}
+                        local total = 0
+                        for _, b in ipairs(blocks:GetChildren()) do
+                            local n = b.Name
+                            t[n] = (t[n] or 0) + 1
+                            total += 1
+                        end
+                        for blockName, count in pairs(t) do
+                            local displayName = getDisplayName(blockName)
+                            f ..= displayName .. ": " .. count .. "\n"
+                        end
+                        f ..= "Total: " .. total .. "\n\n"
+                    end
+                    break
+                end
+            end
+        end
+    end
+end
+
+setclipboard(f)
